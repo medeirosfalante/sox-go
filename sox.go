@@ -32,6 +32,30 @@ func (s Sox) Trim(file string, outputFile string, start float32, duration float3
 	}
 	log.Printf("in all caps: %q\n", out.String())
 	return &File{
-		FilePath: out.String(),
+		FilePath: outputFile,
+	}, nil
+}
+
+func (s Sox) Join(files []string, outputFile string, mix bool) (*File, error) {
+	commandCobine := "-M"
+	if mix {
+		commandCobine = "-m"
+	}
+	params := []string{commandCobine}
+	for _, file := range files {
+		params = append(params, file)
+	}
+	params = append(params, outputFile)
+	cmd := exec.Command("sox", params...)
+	log.Printf("ref %s", cmd.String())
+	var out bytes.Buffer
+	cmd.Stdout = &out
+	err := cmd.Run()
+	log.Printf(" err   %s err", out.String())
+	if err != nil {
+		return nil, err
+	}
+	return &File{
+		FilePath: outputFile,
 	}, nil
 }
