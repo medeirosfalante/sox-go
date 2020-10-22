@@ -26,6 +26,20 @@ func TestTrimAudio(t *testing.T) {
 	os.Remove(filepathOutput)
 }
 
+func TestInfo(t *testing.T) {
+	soxClient := sox.NewSox()
+	filepath := "./audios/sample.wav"
+	file, err := soxClient.Info(filepath)
+	if err != nil {
+		t.Errorf("err : %s", err)
+		return
+	}
+	if file == nil {
+		t.Error("file is null")
+		return
+	}
+}
+
 func TestTrimJoinFiles(t *testing.T) {
 	os.Mkdir("./result", 777)
 	soxClient := sox.NewSox()
