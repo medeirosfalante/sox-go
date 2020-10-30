@@ -26,6 +26,22 @@ func TestTrimAudio(t *testing.T) {
 	os.Remove(filepathOutput)
 }
 
+func TestVolumeUp(t *testing.T) {
+	soxClient := sox.NewSox()
+	filepath := "./audios/sample.wav"
+	filepathOutput := "./result/sample.wav"
+	file, err := soxClient.Volume(filepath, filepathOutput, 2.0)
+	if err != nil {
+		t.Errorf("err : %s", err)
+		return
+	}
+	if file == nil {
+		t.Error("file is null")
+		return
+	}
+	// os.Remove(filepathOutput)
+}
+
 func TestInfo(t *testing.T) {
 	soxClient := sox.NewSox()
 	filepath := "./audios/sample.wav"
