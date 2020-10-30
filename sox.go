@@ -55,6 +55,21 @@ func (s Sox) Repeat(file string, outputFile string, repeat int) (*File, error) {
 	}, nil
 }
 
+//Volume - is func for change volume
+func (s Sox) Volume(file string, outputFile string, volume float32) (*File, error) {
+	cmd := exec.Command("sox", "-v", fmt.Sprintf("%f", volume), file, outputFile)
+	var out bytes.Buffer
+	cmd.Stdout = &out
+	err := cmd.Run()
+	if err != nil {
+		return nil, err
+	}
+	log.Printf("in all caps: %q\n", out.String())
+	return &File{
+		FilePath: outputFile,
+	}, nil
+}
+
 func (s Sox) Info(file string) (*File, error) {
 	cmdDuration := exec.Command("sox", "--info", "-D", file)
 	var out bytes.Buffer
