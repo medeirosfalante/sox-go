@@ -39,7 +39,7 @@ func TestVolumeUp(t *testing.T) {
 		t.Error("file is null")
 		return
 	}
-	// os.Remove(filepathOutput)
+	os.Remove(filepathOutput)
 }
 
 func TestInfo(t *testing.T) {
@@ -54,6 +54,38 @@ func TestInfo(t *testing.T) {
 		t.Error("file is null")
 		return
 	}
+}
+
+func TestFadeOut(t *testing.T) {
+	soxClient := sox.NewSox()
+	filepath := "./audios/sample.wav"
+	filepathOutput := "./result/sample-fadeout.wav"
+	file, err := soxClient.Fade(filepath, filepathOutput, 0.1, 2.0, "out")
+	if err != nil {
+		t.Errorf("err : %s", err)
+		return
+	}
+	if file == nil {
+		t.Error("file is null")
+		return
+	}
+	os.Remove(filepathOutput)
+}
+
+func TestFadeIn(t *testing.T) {
+	soxClient := sox.NewSox()
+	filepath := "./audios/sample.wav"
+	filepathOutput := "./result/sample-fadein.wav"
+	file, err := soxClient.Fade(filepath, filepathOutput, 0.1, 2.0, "in")
+	if err != nil {
+		t.Errorf("err : %s", err)
+		return
+	}
+	if file == nil {
+		t.Error("file is null")
+		return
+	}
+	os.Remove(filepathOutput)
 }
 
 func TestTrimJoinFiles(t *testing.T) {
