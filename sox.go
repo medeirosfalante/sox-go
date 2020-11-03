@@ -2,6 +2,7 @@ package sox
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"log"
 	"os/exec"
@@ -30,11 +31,9 @@ func (s Sox) Trim(file string, outputFile string, start float32, duration float3
 	var out bytes.Buffer
 	cmd.Stdout = &out
 	err := cmd.Run()
-	log.Printf("command: %q\n", cmd.String())
 	if err != nil {
 		return nil, err
 	}
-	log.Printf("in all caps: %q\n", out.String())
 	return &File{
 		FilePath: outputFile,
 	}, nil
@@ -100,11 +99,9 @@ func (s Sox) Join(files []string, outputFile string, mix bool) (*File, error) {
 	}
 	params = append(params, outputFile)
 	cmd := exec.Command("sox", params...)
-	log.Printf("ref %s", cmd.String())
 	var out bytes.Buffer
 	cmd.Stdout = &out
 	err := cmd.Run()
-	log.Printf(" err   %s err", out.String())
 	if err != nil {
 		return nil, err
 	}
@@ -125,7 +122,38 @@ func (s Sox) Combine(files []string, outputFile string) (*File, error) {
 	var out bytes.Buffer
 	cmd.Stdout = &out
 	err := cmd.Run()
-	log.Printf(" err   %s err", out.String())
+	if err != nil {
+		return nil, err
+	}
+	return &File{
+		FilePath: outputFile,
+	}, nil
+}
+
+func (s Sox) Fade(file string, outputFile string, start float32, stop float32, typeFade string) (*File, error) {
+	if typeFade != "in" && typeFade != "out" {
+		return nil, errors.New("invalid type")
+	}
+
+	params := []string{}
+	params = append(params, file)
+	params = append(params, outputFile)
+	params = append(params, "fade")
+	switch typeFade {
+	case "in":
+		params = append(params, fmt.Sprintf("%f", start))
+		params = append(params, fmt.Sprintf("%f", stop))
+		params = append(params, "0")
+	case "out":
+		params = append(params, "0")
+		params = append(params, fmt.Sprintf("%f", stop))
+		params = append(params, fmt.Sprintf("%f", start))
+	}
+	cmd := exec.Command("sox", params...)
+	var out bytes.Buffer
+	cmd.Stdout = &out
+	err := cmd.Run()
+	log.Printf("ref %s", cmd.String())
 	if err != nil {
 		return nil, err
 	}
